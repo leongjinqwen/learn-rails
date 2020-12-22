@@ -1,17 +1,16 @@
-<h1>
-  Article id: <%= @article.id %>
-</h1>
+<h1><%= @article.title %></h1>
 
-<h2>
-  <%= @article.title %>
-</h2>
-<p>
-  <%= @article.body %>
-</p>
-<button>
-  <%= link_to "Edit", edit_article_path(@article) %>
-</button>
+<p><%= @article.body %></p>
 
-<button>
-  <%= link_to "Delete", article_path(@article), method: :delete, data: { confirm: "Are you sure?" } %>
-</button>
+<ul>
+  <li><%= link_to "Edit", edit_article_path(@article) %></li>
+  <li><%= link_to "Destroy", article_path(@article),
+                  method: :delete,
+                  data: { confirm: "Are you sure?" } %></li>
+</ul>
+
+<h2>Comments</h2>
+<%= render @article.comments %>
+
+<h2>Add a comment:</h2>
+<%= render 'comments/form' %>

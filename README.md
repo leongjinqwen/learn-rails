@@ -58,7 +58,8 @@ Things you may want to cover:
       <%= article.title %>
     </a>
     <!-- OR use link_to helper -->
-    <%= link_to article.title, article %>
+    <%= link_to article.title, article %> 
+    <!-- first argument as the link's text, second argument as the link's destination -->
     ```
     The `link_to` helper renders a link with its first argument as the link's text and its second argument as the link's destination.
 
@@ -93,3 +94,35 @@ Things you may want to cover:
     <% end %>
     ```
     `full_messages_for` return an array of user-friendly error messages for a specified attribute.
+
+1.  Add a new model that have relationship with `Article` model
+    ```bash
+    rails generate model Comment commenter:string body:text article:references
+    ```
+    `:reference` keyword is a special data type for models. It creates a new column on your database table with the provided model name appended with an `_id` that can hold integer values (foreign key). Now each comment must `belongs_to` one article, and one article can `has_many` comments. 
+
+1.  Add routes for comments. Code below make comments as a nested resource within articles.
+    ```rb
+    Rails.application.routes.draw do
+      root "articles#index"
+
+      resources :articles do
+        resources :comments
+      end
+    end
+    ```
+
+1.  Form for create new comment for article
+    ```html
+    <%= form_with model: [ @article, @article.comments.build ] do |form| %>
+      ...
+    <% end %>
+    ```
+    The `form_with` call here uses an `array`, which will build a nested route, such as `/articles/1/comments`
+
+1.  Concerns(mixin) make large controllers or models easier to understand and manage. This also has the advantage of reusability when multiple models (or controllers) share the same concerns.
+
+1.  Deleting associated objects - when delete an article which has many comments, you want to delete all comments at the same time, use `dependent` option on the foreign key in `Article` model. (on_delete=cascade)
+    ```rb
+    has_many :comments, dependent: :destroy
+    ```
