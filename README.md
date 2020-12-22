@@ -23,7 +23,8 @@ Things you may want to cover:
 
 * ...
 
-1. Type `rails` in the terminal to checkout common rails commands.
+## Notes
+1.  Type `rails` in the terminal to checkout common rails commands.
     ```bash
     rails new <project_name>    #Create a new Rails application.
     rails server  (alias `s`)   #Start the Rails server, visit the app at `http://localhost:3000` or `http://127.0.0.1:3000`
@@ -32,18 +33,18 @@ Things you may want to cover:
     rails routes                #Show all routes
     ```
 
-1. Create ArticlesController and its index action, `--skip-routes` option if you want to add routes yourself.
+1.  Create ArticlesController and its index action, `--skip-routes` option if you want to add routes yourself.
     ```bash
     rails generate controller Articles index --skip-routes
     ```
 
-1. `Model` is a Ruby class that is used to represent data and can interact with the application's database through `Active Record`.
+1.  `Model` is a Ruby class that is used to represent data and can interact with the application's database through `Active Record`.
     ```bash
     rails generate model Article title:string body:text
     ```
     Migration file will be created and used to alter the structure of database, but not make changes to the database until you run `rails db:migrate` in terminal.
 
-1. URL and path helper in `erb`
+1.  URL and path helper in `erb`
     Use `resources` method to map all of the conventional routes of a collection of resources.
     ```rb
     Rails.application.routes.draw do
@@ -61,7 +62,7 @@ Things you may want to cover:
     ```
     The `link_to` helper renders a link with its first argument as the link's text and its second argument as the link's destination.
 
-1. Submit form data
+1.  Submit form data
     ```rb
     @article = Article.new(title: params[:article][:title], body: params[:article][:body])
     ```
@@ -77,4 +78,18 @@ Things you may want to cover:
     @article = Article.new(article_params)
     ```
 
-    
+1.  Validations
+    Validations are rules that are checked before a model object is saved. If any of the checks fail, error messages will be added to the errors attribute of the model object. Validations are added to the model in `app/models/article.rb`.
+    ```rb
+    class Article < ApplicationRecord
+      validates :title, presence: true
+      validates :body, presence: true, length: { minimum: 10 }
+    end
+    ```
+    To display the error messages, make changes to each form field in html.erb
+    ```html
+    <% @article.errors.full_messages_for(:title).each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+    ```
+    `full_messages_for` return an array of user-friendly error messages for a specified attribute.
