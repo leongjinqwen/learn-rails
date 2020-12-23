@@ -16,6 +16,7 @@ class ArticlesController < ApplicationController
   def create
     # @article = Article.new(title: params[:article][:title], body: params[:article][:body])
     @article = Article.new(article_params)
+    @article.user = @current_user
 
     if @article.save
       redirect_to @article #redirect to show

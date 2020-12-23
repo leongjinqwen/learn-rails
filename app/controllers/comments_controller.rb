@@ -7,8 +7,10 @@ class CommentsController < ApplicationController
     # @comment = @article.comments.create(comment_params) 
     # `create` is an association method that automatically link the comment to that particular article
     
-    @comment = Comment.new(article: @article, commenter: comment_params[:commenter], body: comment_params[:body])
-    
+    @comment = Comment.new(comment_params)
+    @comment.article = @article
+    @comment.user = @current_user
+
     if @comment.save
       redirect_to article_path(@article)
     else
@@ -32,6 +34,6 @@ class CommentsController < ApplicationController
   
   private
   def comment_params
-    params.require(:comment).permit(:commenter, :body)
+    params.require(:comment).permit(:body)
   end
 end

@@ -33,6 +33,18 @@ Things you may want to cover:
     rails routes                #Show all routes
     ```
 
+1.  Common database rake tasks (https://jacopretorius.net/2014/02/all-rails-db-rake-tasks-and-what-they-do.html)
+    ```bash
+    db:create           #Creates the database for the current RAILS_ENV environment
+    db:drop             #Drops the database for the current RAILS_ENV environment
+    db:migrate          #Runs migrations for the current environment that have not run yet
+    db:seed             #Runs the db/seeds.rb file
+    db:setup            #Runs db:create, db:schema:load and db:seed
+    db:reset            #Runs db:drop and db:setup.
+    db:migrate:reset    #Runs db:drop, db:create and db:migrate.
+    db:migrate:status   #Displays the current migration status.
+    ```
+
 1.  Create ArticlesController and its index action, `--skip-routes` option if you want to add routes yourself.
     ```bash
     rails generate controller Articles index --skip-routes
