@@ -138,6 +138,75 @@ Things you may want to cover:
     ```rb
     has_many :comments, dependent: :destroy
     ```
+## ActiveRecords
+Rails Active Record is the Object/Relational Mapping (ORM) layer supplied with Rails. Each Active Record object has CRUD (Create, Read, Update, and Delete) methods for database access.  
+(https://guides.rubyonrails.org/active_record_basics.html)
+1.  Create
+    ```rb
+    #create and save into database at the same time
+    user = User.create(name: "will", email: "will@email.com") 
+    #new method
+    user = User.new
+    user.name = "will"
+    user.email = "will@email.com"
+    user.save
+    #both methods return the new object
+    ```
+
+1.  Read (https://guides.rubyonrails.org/active_record_querying.html)
+    ```rb
+    user = User.find(10)    #Find user with primary key (id) 10, raise RecordNotFound exception if no matching record (get_by_id)
+    users = User.find([10, 13]) # OR User.find(10, 13) => return an array of matching records from provided ids 
+
+    user = User.take        #retrieves a record without any implicit ordering, returns `nil` if no record is found (get_or_none)
+    users = User.take(2)    #equivalent to => SELECT * FROM user LIMIT 2
+    user = User.take!       #behave like `take` but will raise RecordNotFound exception if no matching record
+
+    user = User.first       #finds the first record ordered by primary key (default), returns `nil` if no record is found
+    users = User.first(3)   #return an array up to that number of results
+    user = User.first!      #behave like `first` but will raise RecordNotFound exception if no matching record
+    user = User.order(:name).first
+
+    user = User.last 
+    user = User.order(:name).last
+
+    user = User.find_by(name: 'will')   # OR User.find_by name: 'will' => finds the first record matching conditions, `nil` if not found
+    user = User.where(name: 'will').take  #get same result as using `find_by`
+    user = User.find_by!(name: 'will')   #raise RecordNotFound
+    ```
+    Iterate over large set of records
+    ```rb
+    User.all.each do |u|
+      Mailer.send_reminder(u)
+    end
+    ```
+    Code above will instruct Active Record fetch the entire table in a single pass, build a model object per row, and then keep the entire array of model objects in memory. The entire collection may exceed the amount of memory available.  
+    The `find_each` and `find_in_batches` methods are intended for use in the batch processing of a large number of records that wouldn't fit in memory all at once. If you just need to loop over a thousand records the regular find methods are the preferred option.
+
+1.  Update
+    ```rb
+    #get the user from db
+    user = User.find_by(name: 'will')
+    # 1. reassign value
+    user.name = 'john'
+    user.save
+    # 2. use update method (useful for updating several attributes at once)
+    user.update(name: 'john')
+
+    #update several records in bulk
+    User.update_all "name='john', email='john@email.com'"
+    ```
+
+1.  Delete
+    ```rb
+    #delete single record
+    user = User.find_by(name: 'will')
+    user.destroy
+
+    #delete several records in bulk
+    User.destroy_by(name: 'David')   #find and delete all users named David
+    User.destroy_all        #delete all users
+    ```
 
 ## User authentication
 (https://hackernoon.com/building-a-simple-session-based-authentication-using-ruby-on-rails-9tah3y4j)  
