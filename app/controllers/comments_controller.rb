@@ -1,4 +1,6 @@
 class CommentsController < ApplicationController
+  before_action :logged_in_user
+
   def create
     @article = Article.find(params[:article_id])
     
@@ -10,14 +12,14 @@ class CommentsController < ApplicationController
     if @comment.save
       redirect_to article_path(@article)
     else
-      flash[:notice] = []
+      flash[:danger] = []
       @comment.errors.full_messages_for(:body).each do |message|
-        flash[:notice] << message
+        flash[:danger] << message
       end
       @comment.errors.full_messages_for(:commenter).each do |message|
-        flash[:notice] << message
+        flash[:danger] << message
       end
-      render "articles/show"
+      redirect_to article_path(@article)
     end
   end
 

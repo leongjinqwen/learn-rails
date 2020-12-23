@@ -126,3 +126,34 @@ Things you may want to cover:
     ```rb
     has_many :comments, dependent: :destroy
     ```
+
+## User authentication
+(https://hackernoon.com/building-a-simple-session-based-authentication-using-ruby-on-rails-9tah3y4j)  
+
+1.  Add `bcrypt` in Gemfile to store password hashes in the database
+    ```
+    gem 'bcrypt', '~> 3.1.7'
+    ```
+
+1.  Install dependencies
+    ```bash
+    bundle install
+    ```
+
+1.  Generate model and controller for User
+    ```bash
+    rails generate model User name:string email:string password_digest:string
+
+    rails db:migrate
+
+    rails generate controller Users
+    ```
+
+1.  Add `has_secure_password` method to user model. `has_secure_password` adds two fields to model: `password` and `password_confirmation`. These fields don't correspond to database columns! Instead, the method expects there to be a `password_digest` column defined in migrations. 
+    ```rb
+    class User < ApplicationRecord
+      has_secure_password
+    end
+    ```
+    `has_secure_password` also adds some `before_save` hooks to model. These compare `password` and `password_confirmation`. If they match (or if `password_confirmation` is nil), then it updates the `password_digest` column.
+    
