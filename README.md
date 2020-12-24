@@ -138,6 +138,7 @@ Things you may want to cover:
     ```rb
     has_many :comments, dependent: :destroy
     ```
+
 ## ActiveRecords
 Rails Active Record is the Object/Relational Mapping (ORM) layer supplied with Rails. Each Active Record object has CRUD (Create, Read, Update, and Delete) methods for database access.  
 (https://guides.rubyonrails.org/active_record_basics.html)
@@ -207,6 +208,51 @@ Rails Active Record is the Object/Relational Mapping (ORM) layer supplied with R
     User.destroy_by(name: 'David')   #find and delete all users named David
     User.destroy_all        #delete all users
     ```
+    
+## Set Up Rails with Postgres
+1.  Installing requirements
+    ```bash
+    gem install pg
+    ```
+
+1.  Add `pg` to Gemfile
+    ```rb
+    gem 'pg', '>= 0.18', '< 2.0'
+    ```
+
+1.  Make changes to `database.yml`
+    ```yml
+    default: &default
+      adapter: postgresql
+      encoding: unicode
+      pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+    development:
+      <<: *default
+      database: rubyblog_development
+
+    test:
+      <<: *default
+      database: rubyblog_test
+
+    production:
+      <<: *default
+      database: rubyblog_production
+      username: rubyblog
+      password: <%= ENV['RUBYBLOG_DATABASE_PASSWORD'] %>
+    ```
+
+1.  Create and migrate new database
+    ```
+    rails db:create
+    rails db:migrate
+    ```
+
+1.  When switch from SQLite to Postgres, getting error caused by PG, `UndefinedTable: ERROR:  relation "users" does not exist`. Because first migration reference to `users` table that only created in third migration file.  
+`Solution`: Change the migration file timestamp(filename) to timestamp earlier than first migration file. When run migration, it will run the migration file followed by the timestamp, so that the `users` table will be created before the other tables that reference to it. 
+
+## Setup Env Variables
+Run `EDITOR="code --wait" rails credentials:edit` to view/modify environment variables
 
 ## User authentication
 (https://hackernoon.com/building-a-simple-session-based-authentication-using-ruby-on-rails-9tah3y4j)  
