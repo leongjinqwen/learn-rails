@@ -208,7 +208,7 @@ Rails Active Record is the Object/Relational Mapping (ORM) layer supplied with R
     User.destroy_by(name: 'David')   #find and delete all users named David
     User.destroy_all        #delete all users
     ```
-    
+
 ## Set Up Rails with Postgres
 1.  Installing requirements
     ```bash
@@ -284,3 +284,42 @@ Run `EDITOR="code --wait" rails credentials:edit` to view/modify environment var
     ```
     `has_secure_password` also adds some `before_save` hooks to model. These compare `password` and `password_confirmation`. If they match (or if `password_confirmation` is nil), then it updates the `password_digest` column.
     
+
+## Admin Interface
+1.  Add gem into Gemfile
+    ```
+    gem 'activeadmin'
+    gem 'devise' 
+    ```
+    `Devise` is a Gem that handles authentication for Rails.
+
+1.  Generate `ActiveAdmin` class to use with Devise. A new `admin_users` table and `active_admin_comments` table will be created once database migrated.
+    ```bash
+    rails generate active_admin:install
+    rails db:migrate
+    ```
+    But now no admin user created in the database yet, go to `db/seed.rb` then amend the admin user's email and password that you wish to use to login the admin dashboard. Run `rails db:seed`. Now you can login the admin dashboard at `http://localhost:3000/admin`.
+    ```rb
+    AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password') if Rails.env.development?
+    ```
+
+1.  Register our models with Active Admin
+    ```bash
+    rails generate active_admin:resource <model_name>
+    rails generate active_admin:resource User
+    rails generate active_admin:resource Article
+    rails generate active_admin:resource Comment
+    ```
+    Because activeadmin by default come with an `active_admin_comments` table, which having the same route name with the `Comment` model in the admin dashboard, so we need to register the `Comment` model as another name `Article_Comments`.
+    ```rb
+    # app/admin/comments.rb
+    ActiveAdmin.register Comment, as: "Article_Comments" do
+      ...
+    end
+    ```
+
+1.  After install activeadmin, the styling of the entire app using the activeadmin css, to avoid pages beside admin dashboard using the activeadmin's stylesheet, remove this line from `app/assets/stylesheets/application.css`.
+    ```
+    *= require_tree .
+    ```
+    Here is some admin themes that can be installed (https://github.com/activeadmin/activeadmin/wiki/Themes)
