@@ -25,6 +25,7 @@ gem 'pg', '>= 0.18', '< 2.0'
 gem 'devise'
 gem 'activeadmin'
 gem 'arctic_admin'
+gem "aws-sdk-s3", require: false
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'

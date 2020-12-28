@@ -79,7 +79,8 @@ Things you may want to cover:
     ```rb
     @article = Article.new(title: params[:article][:title], body: params[:article][:body])
     ```
-    The code above can get the form data, but that would be verbose and possibly error-prone, that would become worse as we add more fields. Instead, we will pass a Hash that contains the values. If we pass the unfiltered `params[:article]` Hash directly to `Article.new`, Rails will raise `ForbiddenAttributesError`. So, we will use `Strong Parameters` to filter params. Add it as a private method in the controller. 
+    The code above can get the form data, but that would be verbose and possibly error-prone, that would become worse as we add more fields. Instead, we will pass a Hash that contains the values. If we pass the unfiltered `params[:article]` Hash directly to `Article.new`, Rails will raise `ForbiddenAttributesError`. So, we will use `Strong Parameters` to filter params. Add it as a private method in the controller.  
+    `Strong Parameters` provides an interface for protecting attributes from end-user assignment. This makes Action Controller parameters forbidden to be used in Active Model mass assignment until they have been explicitly enumerated.
     ```rb
     private
     def article_params
@@ -323,3 +324,62 @@ Run `EDITOR="code --wait" rails credentials:edit` to view/modify environment var
     *= require_tree .
     ```
     Here is some admin themes that can be installed (https://github.com/activeadmin/activeadmin/wiki/Themes)
+
+
+## Upload files - Active Storage 
+(https://edgeguides.rubyonrails.org/active_storage_overview.html)
+1.  Active Storage facilitates uploading files to a cloud storage service like Amazon S3, Google Cloud Storage, or Microsoft Azure Storage and attaching those files to Active Record objects. It comes with a local disk-based service for development and testing and supports mirroring files to subordinate services for backups and migrations.
+
+1.  First, install active storage which will generates a migration which crate two tables: 
+    - `active_storage_blobs` => information about files like metadata, filename, checksum
+    - `active_storage_attachments` => name of any file attachment
+    After installed, remember to run `rails db:migrate`.
+    ```bash
+    rails active_storage:install
+    ```
+
+1.  Declare Active Storage services in `config/storage.yml` and set the AWS secret in `credentials.yml`
+    ```yml
+    amazon:
+      service: S3
+      access_key_id: <%= Rails.application.credentials.dig(:aws, :access_key_id) %>
+      secret_access_key: <%= Rails.application.credentials.dig(:aws, :secret_access_key) %>
+      region: us-east-1
+      bucket: your_own_bucket
+      public: true
+    ```
+
+1.  To use S3 service in both development and production, change the `config/environment/development.rb` and `config/environment/production.rb` file, or can choose to only store into S3 in production.
+    ```rb
+    config.active_storage.service = :amazon
+    ```
+
+1.  Add the AWS SDK gem to your `Gemfile`, then run `bundle install`
+    ```
+    gem "aws-sdk-s3", require: false
+    ```
+
+1.  Attach the image to the article model
+    ```rb
+    has_one_attached :image
+    ```
+    Add a file input in the `articles/_form.html.erb` for user to browse a file.
+    ```html
+    <div>
+      <%= form.label :image %>
+      <%= form.file_field :image %>
+    </div>
+    ```
+    Add `:image` as one of the permit params in controller.
+    ```rb
+    private
+    def article_params
+      params.require(:article).permit(:title, :body, :image)
+    end
+    ```
+    Lastly, show the article's image in `articles/show.html.erb`
+    ```html
+    <% if @post.image.attached? %>
+      <%= image_tag @post.image %>
+    <% end %>
+    ```
