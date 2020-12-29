@@ -1,18 +1,36 @@
-<h1><%= @article.title %></h1>
-<small>Author : <%= @article.user.name %></small>
+<h3>
+  <strong>Title :</strong>
+  <%= @article.title %>
+</h3>
+<p>
+  <strong>Author : </strong>
+  <%= @article.user.name %>
+</p>
 
-<% if @article.image.attached? %>
-  <%= image_tag @article.image %>
+<div>
+  <% if @article.images.attached? %>
+    <% @article.images.each do |img| %>
+      <%= image_tag img, width:"300px" %>
+    <% end %>
+  <% end %>
+</div>
+
+<p>
+  <strong>Body : </strong>
+  <%= @article.body %>
+</p>
+
+<% if @current_user.id == @article.user.id %>
+  <div>
+    <%= link_to "Edit", edit_article_path(@article), class:"btn btn-success" %>
+    <%= link_to "Destroy", 
+      article_path(@article),
+      method: :delete,
+      data: { confirm: "Are you sure?" },
+      class:"btn btn-danger"
+    %>
+  </div>
 <% end %>
-
-<p>Body: <%= @article.body %></p>
-
-<ul>
-  <li><%= link_to "Edit", edit_article_path(@article) %></li>
-  <li><%= link_to "Destroy", article_path(@article),
-                  method: :delete,
-                  data: { confirm: "Are you sure?" } %></li>
-</ul>
 
 <h2>Comments</h2>
 <%= render @article.comments %>

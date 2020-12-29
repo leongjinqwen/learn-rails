@@ -361,7 +361,8 @@ Run `EDITOR="code --wait" rails credentials:edit` to view/modify environment var
 
 1.  Attach the image to the article model
     ```rb
-    has_one_attached :image
+    has_one_attached :image # one-to-one relationship
+    has_many_attached :images # one-to-many relationship
     ```
     Add a file input in the `articles/_form.html.erb` for user to browse a file.
     ```html

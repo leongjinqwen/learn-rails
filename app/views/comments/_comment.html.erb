@@ -4,10 +4,9 @@
   </strong>
   <%= comment.body %>
 </p>
-<button class="btn btn-outline-danger">
-  <%= link_to 'Delete Comment', 
-    [comment.article, comment], # array=>nested route (/articles/:article_id/comments/:id)
-    method: :delete,
-    data: { confirm: "Are you sure?" } 
-  %>
-</button>
+<%= link_to 'Delete', 
+  [comment.article, comment], # array=>nested route (/articles/:article_id/comments/:id)
+  method: :delete,
+  data: { confirm: "Are you sure?" },
+  class:"btn btn-danger" 
+%>
