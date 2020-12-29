@@ -384,3 +384,35 @@ Run `EDITOR="code --wait" rails credentials:edit` to view/modify environment var
       <%= image_tag @post.image %>
     <% end %>
     ```
+
+## Bootstrap
+1.  Use `yarn` to install bootstrap dependencies
+    ```bash
+    yarn add bootstrap jquery popper.js
+    ```
+
+1.  Point Rails towards Webpacker and the new dependencies.
+    ```js
+    // config/webpack/environment.js
+    const { environment } = require('@rails/webpacker')
+
+    const webpack = require('webpack')
+    environment.plugins.append('Provide', 
+    new webpack.ProvidePlugin({
+        $: 'jquery',
+        jQuery: 'jquery',
+        Popper: ['popper.js', 'default']
+    }))
+    module.exports = environment
+    ```
+
+1.  Import bootstrap in `javascript/packs/application.js`
+    ```js
+    import "bootstrap"
+    import Rails ...
+    ```
+
+1.  Finally import bootstrap in the application css manifest file. However, by default, the manifest file is named as `app/assets/stylesheets/application.css`. Rename it to `app/assets/stylesheets/application.scss`, then add this line in the file.  
+    ```scss
+    @import "bootstrap/scss/bootstrap";
+    ```

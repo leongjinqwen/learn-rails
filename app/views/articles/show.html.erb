@@ -1,39 +1,61 @@
-<h3>
-  <strong>Title :</strong>
-  <%= @article.title %>
-</h3>
-<p>
-  <strong>Author : </strong>
-  <%= @article.user.name %>
-</p>
+<div class="card mx-auto" style="width: 36rem;">
 
-<div>
   <% if @article.images.attached? %>
-    <% @article.images.each do |img| %>
-      <%= image_tag img, width:"300px" %>
-    <% end %>
+    <div id="articleCarousel" class="carousel slide" data-ride="carousel">
+      <div class="carousel-inner">
+      <% @article.images.each_with_index do |img, ind| %>
+        <%= 
+          content_tag :div, 
+          class: "carousel-item #{'active' if ind == 0}" do
+        %>
+          <%= image_tag img, class:"d-block w-100", style:"max-height:50vh" %>
+        <% end %>
+      <% end %>
+    </div>
+      <a class="carousel-control-prev" href="#articleCarousel" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next" href="#articleCarousel" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
   <% end %>
-</div>
 
-<p>
-  <strong>Body : </strong>
-  <%= @article.body %>
-</p>
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <h5 class="card-title"><%= @article.title %></h5>
+      <div class="d-flex justify-content-end">
+        <% if @current_user.id == @article.user.id %>
+          <div>
+            <%= link_to "Edit", edit_article_path(@article), class:"btn btn-success" %>
+            <%= link_to "Destroy", 
+              article_path(@article),
+              method: :delete,
+              data: { confirm: "Are you sure?" },
+              class:"btn btn-danger"
+            %>
+          </div>
+        <% else %>
+          <small>
+            Author : <%= link_to @article.user.name, user_path(@article.user.id) %>
+          </small>
+        <% end %>
+      </div>
+      
+    </div>
 
-<% if @current_user.id == @article.user.id %>
-  <div>
-    <%= link_to "Edit", edit_article_path(@article), class:"btn btn-success" %>
-    <%= link_to "Destroy", 
-      article_path(@article),
-      method: :delete,
-      data: { confirm: "Are you sure?" },
-      class:"btn btn-danger"
-    %>
+    <p class="card-text">
+      <%= @article.body %>
+    </p>
+    
+    <% if @article.comments.length > 0 %>
+      <div class="border">
+        <%= render :partial => 'comments/comment', :collection => @article.comments %>
+      </div>
+    <% end %>
   </div>
-<% end %>
+    <%= render 'comments/form' %>
 
-<h2>Comments</h2>
-<%= render @article.comments %>
-
-<h2>Add a comment:</h2>
-<%= render 'comments/form' %>
+</div>

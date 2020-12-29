@@ -1,12 +1,12 @@
-<p>
-  <strong>
-    <%= comment.user.name %> : 
-  </strong>
+<div class="d-flex p-2">
+  <div class="mx-3" style="width:50px">
+    <%= image_tag comment.user.avatar, class:"rounded-circle w-100"%> 
+  </div>
   <%= comment.body %>
-</p>
-<%= link_to 'Delete', 
-  [comment.article, comment], # array=>nested route (/articles/:article_id/comments/:id)
-  method: :delete,
-  data: { confirm: "Are you sure?" },
-  class:"btn btn-danger" 
-%>
+  <%# array=>nested route (/articles/:article_id/comments/:id) %>
+  <% if @current_user.id == comment.user.id %>
+    <div class="mr-0 ml-auto">
+      <%= link_to 'X', [comment.article, comment], method: :delete, data: { confirm: "Are you sure?" }, class:"btn btn-danger" %>
+    </div>
+  <% end %>
+<div>

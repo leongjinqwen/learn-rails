@@ -13,7 +13,4 @@
  
  *= require_self
  */
-a, a:hover {
-    text-decoration: none;
-    color: black;
-}
+@import "bootstrap/scss/bootstrap";
