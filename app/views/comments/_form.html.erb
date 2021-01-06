@@ -1,16 +1,9 @@
-<%= form_with model: [ @article, @article.comments.build ] do |form| %>
-
-  <div class="input-group">
-
-    <%= form.text_field :body, class:"form-control", placeholder: "Say something..." %>
-
-    <% @article.errors.full_messages_for(:body).each do |message| %>
-      <div><%= message %></div>
-    <% end %>
-    
-    <div class="input-group-append">
-      <%= form.submit  class:"btn btn-primary" %>
-    </div>
+<%= form_with model: [ @article, @article.comments.build ], class:"input-group" do |form| %>
+  <%= form.text_field :body, class:"form-control", placeholder: "Say something..." %>
+  <% @article.errors.full_messages_for(:body).each do |message| %>
+    <div><%= message %></div>
+  <% end %>
+  <div class="input-group-append">
+    <%= form.submit  class:"btn btn-primary" %>
   </div>
-
 <% end %>
